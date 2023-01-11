@@ -1,10 +1,8 @@
-import { Console } from "console";
-import { type } from "os";
 
 //Explicit type declaration
 export let myFirstName: string = "Chris";
 export let myAge: number = 19;
-export let lies = false;
+export let lies: boolean = false;
 export let diff: (string | number) = "the boy";
 diff = 9;  // it works (note: | == OR)
 
@@ -25,7 +23,7 @@ export const myObject = {
     firstName: "enyia",
     "lastName": "chidi"
 }
-
+// adding ? makes the property optional
 const myObjectTwo: { tolu: string, goke?: string, olu?: number } = {
     tolu: "goke"
 }
@@ -33,17 +31,18 @@ myObjectTwo.goke = "hd";
 myObjectTwo.goke = "christiano"
 myObjectTwo.olu = 9
 
+// Another way of declaring an Object
 const myObjectThree: { [index: string]: (number | string) } = {
     ismail: 19,
     uche: "jldgj"
 }
 
-// Alias
+// Alias  /* Initiated with "type" */
 type myNum = number;
 type myString = string;
 
 const tryAliasNum: myNum = 8;
-// const tryAliasString: string = 8;      /* Throws error */
+// const tryAliasString: myString = 8;      /* Throws error */
 
 // Interface works only for objects
 interface myObjectType {
@@ -65,9 +64,10 @@ const myShapeObject: myObjectTypePlus = {
 
 // Functions
 function myFirstFun(): string {
-    return "boy" + "90"
+    return "boy " + "90"
 }
 
+// Any type means that the function can return any type of data
 function mySecondFun(a: number = 6, b: number = 9, c?: string): any {
     const ans = a + b
     return ans;
@@ -77,19 +77,25 @@ mySecondFun()                       /* Works because the "?" made 'c' optional *
 type myAliasFun = (value: number, valueTwo?: boolean) => any;
 
 const myThirdFun: myAliasFun = (value, valueTwo) => {
-    return value
+    if (valueTwo) {
+        return value;
+    }
+
+    return value ** 2;
 }
-myThirdFun(6);
+myThirdFun(6, true)                 /* Works because the "?" made 'valueTwo' optional */;
+
 
 // Casting
-let myX: unknown = "hello"
-console.log(myX as string);
+let myX: unknown = "hello"         /* "unknown" is a type that can hold any type of data */
+console.log(myX as string);       /* Casting "myX" to a string */
 
 let myY: any = "hello there"
-console.log(myY as string);
+// console.log(myY as string);
 
 let myZ: unknown = "hello there one"
 // console.log((myZ as number).length);             /* Throws error because "myZ" still holds a string */
+
 
 // CLASSES WITH VISIBILITY
 /*
@@ -128,22 +134,25 @@ class Person {
 const myOwn = new Person(18, "Chris");
 console.log(myOwn.getName() + " " + myOwn.getAge() + " " + myOwn.setName());
 
-
+// Abstract is a class that can only be inherited from and not instantiated and is used to create a template for other classes
 abstract class Shapes {
     public abstract toNumber(): number
 
+    public ourNumber: number = 500;
+
     public toString(): string {
-        return `Calculation is = ${this.toNumber()}`
+        return `Calculation is = ${this.ourNumber}`
     }
 }
 
 class myShapes extends Shapes {
     public constructor(protected height: number, protected width: number) {
-        super()
+        // super() is used to call the constructor of the parent class
+        super();
     }
 
-    public toNumber(): number {
-        return 2 + 3
+    toNumber() {
+        return this.height + this.width
     }
 
     // Override the toString Method in Shapes Class
@@ -154,15 +163,19 @@ class myShapes extends Shapes {
 const myAnClass = new myShapes(5, 3);
 console.log(myAnClass.toString())
 
+
 // Generics
 function myGenerics<T, S>(a: T, b: S): any {
     return [a, b]
 }
 console.log(myGenerics<number, string>(5, "works"))
 
-type wrap<T> = { ans: T }
+// Generic with Alias
+type wrap<T> = { ans?: T, verdict?: T }
 const myWrap: wrap<number> = { ans: 9 }
 console.log(myWrap)
+const myBWrap: wrap<boolean> = { verdict: true }
+console.log(myBWrap)
 
 type awrap<T = string> = { ans: T }
 const myAWrap: awrap = { ans: "9" }
@@ -187,21 +200,25 @@ interface myUtil {
 }
 
 const myNewUtil: Partial<myUtil> = {};
-// const amyNewUtil: Required<myUtil> = {}                  /* Throws an error */
+
+// const anyNewUtil: Required<myUtil> = {}                  /* Throws an error */
+
 const amyNewUtil: Omit<myUtil, "name"> = {
     age: 8,
     school: "OAU"
 }
 
-// Nullish Coalescene and Optional Chaining
+
+// Nullish Coalescence and Optional Chaining
 function myNull(para: string | null | undefined): any {
+    // if para is null or undefined, it will print "invalid para"
     console.log(`para is ${para ?? "Invalid Para"}`)
 }
 myNull("chris");         /* Prints "para is 'chris'" */
 myNull(null)            /* Prints "para is 'invalid para'" */
 
 interface myChain {
-    age: number,
+    age?: number,
     name?: {
         firstname: string,
         lastname?: string
@@ -211,13 +228,13 @@ function myChainFun(para: myChain) {
     const myPara = para.name?.firstname;
 
     if (myPara === undefined) {
-        console.log("name is " + undefined)
+        console.log(`age is ${ para.age ?? "name is undefined but"}`)
     } else {
         console.log(`Name is valid and is ${para.name?.firstname} ${para.name?.lastname}`)
     }
 }
 let cc: myChain = {
-    age: 5
+    age: 5,
 }
 let cca: myChain = {
     age: 5,
